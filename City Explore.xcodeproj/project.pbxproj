@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F9AFFD7F2D6BA2EF0068CE15 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F9AFFD7E2D6BA2EF0068CE15 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		F949984C2D69C20E00680193 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		F949983B2D69C20C00680193 /* City Explore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "City Explore.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F949984B2D69C20E00680193 /* City ExploreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "City ExploreTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F94998552D69C20E00680193 /* City ExploreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "City ExploreUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F9AFFD7E2D6BA2EF0068CE15 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,6 +84,7 @@
 				F949984E2D69C20E00680193 /* City ExploreTests */,
 				F94998582D69C20E00680193 /* City ExploreUITests */,
 				F949983C2D69C20C00680193 /* Products */,
+				F9AFFD7E2D6BA2EF0068CE15 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9AFFD7F2D6BA2EF0068CE15 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
