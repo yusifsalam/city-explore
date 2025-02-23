@@ -1,21 +1,24 @@
-//
-//  ContentView.swift
-//  City Explore
-//
-//  Created by Yusif Salam-zade on 22.2.2025.
-//
-
 import SwiftUI
+import MapKit
 
 struct ContentView: View {
+    @State private var locationManager = LocationManager()
+    @State private var position: MapCameraPosition = .automatic
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        Map(position: $position)
+            .mapControls {
+                MapUserLocationButton()
+                MapCompass()
+            }
+            .task {
+                locationManager.requestLocationAuthorization()
+                locationManager.startMonitoringLocationStatus()
+                await locationManager.updateLocation()
+            }
+            .onDisappear {
+                locationManager.stopMonitoringLocationStatus()
+            }
     }
 }
 
