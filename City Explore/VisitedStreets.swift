@@ -3,7 +3,6 @@ import MapKit
 
 struct VisitedStreets: View {
     let streetSegments = [
-        // First street
         StreetSegment(
             name: "Fabianinkatu",
             coordinates: [
@@ -12,7 +11,6 @@ struct VisitedStreets: View {
             ],
             isVisited: true
         ),
-        // Second street
         StreetSegment(
             name: "Yliopistonkatu",
             coordinates: [
@@ -23,7 +21,6 @@ struct VisitedStreets: View {
         ),
     ]
     
-    // Initial map position centered on sample data
     @State private var position = MapCameraPosition.region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 60.169801, longitude: 24.949062),
@@ -33,7 +30,6 @@ struct VisitedStreets: View {
     
     var body: some View {
         Map(position: $position) {
-            // Add polylines for each street segment
             ForEach(streetSegments) { segment in
                 MapPolyline(coordinates: segment.coordinates)
                     .stroke(segment.isVisited ? .green : .red, lineWidth: 4)
@@ -63,7 +59,6 @@ struct VisitedStreets: View {
     }
 }
 
-// Simple model for street segments
 struct StreetSegment: Identifiable {
     let id = UUID()
     let name: String
