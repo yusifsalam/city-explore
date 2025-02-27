@@ -2,24 +2,28 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
-    @State private var locationManager = LocationManager()
-    @State private var position: MapCameraPosition = .automatic
+    
+    @State private var selectedTab: Tabs = .visitedStreets
     
     var body: some View {
-        Map(position: $position)
-            .mapControls {
-                MapUserLocationButton()
-                MapCompass()
+        TabView(selection: $selectedTab) {
+            Tab("Visited Streets", systemImage: "figure.walk", value: .visitedStreets) {
+                VisitedStreets()
             }
-            .task {
-                locationManager.requestLocationAuthorization()
-                locationManager.startMonitoringLocationStatus()
-                await locationManager.updateLocation()
+            Tab("User Location", systemImage: "location.fill", value: .userLocation) {
+                UserLocationView()
             }
-            .onDisappear {
-                locationManager.stopMonitoringLocationStatus()
-            }
+        }
+      
     }
+}
+
+enum Tabs: Equatable, Hashable, Identifiable {
+    
+    case visitedStreets
+    case userLocation
+    
+    var id: Self { self }
 }
 
 #Preview {
