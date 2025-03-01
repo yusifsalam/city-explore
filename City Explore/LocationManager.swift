@@ -1,9 +1,11 @@
 import CoreLocation
 import MapKit
+import OSLog
 
 @MainActor
 @Observable
 public final class LocationManager {
+    private let logger = Logger(subsystem: "fi.yusif.CityExplore", category: "LocationManager")
     private let manager = CLLocationManager()
     private var monitoringTask: Task<Void, Never>?
     
@@ -19,6 +21,7 @@ public final class LocationManager {
     public func requestLocationAuthorization() {
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()
+            logger.info("Requesting location authorization")
         }
     }
     
@@ -28,6 +31,7 @@ public final class LocationManager {
     
     public func startMonitoringLocationStatus() {
         let initialStatus = locationsStatus
+        logger.info("Starting location status monitoring")
         monitoringTask = Task {
             while true {
                 updateLocationAuthorizationStatus()
@@ -40,6 +44,7 @@ public final class LocationManager {
     }
     
     public func stopMonitoringLocationStatus() {
+        logger.info("Stopping location status monitoring")
         monitoringTask?.cancel()
     }
     
@@ -50,6 +55,7 @@ public final class LocationManager {
             for try await update in updates {
                 if let location = update.location {
                     self.location = location
+                    logger.notice("Location updated")
                     break
                 }
             }
@@ -64,11 +70,12 @@ public final class LocationManager {
             for try await update in updates {
                 if let location = update.location {
                     self.location = location
+                    logger.notice("Current location found")
                     return location
                 }
             }
         } catch {
-            print("Could not get location")
+            logger.error("Could not get current location")
         }
         return nil
     }
