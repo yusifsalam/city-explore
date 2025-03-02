@@ -4,79 +4,58 @@ import OSLog
 
 @MainActor
 @Observable
-public final class LocationManager {
+public final class LocationManager: NSObject, CLLocationManagerDelegate {
     private let logger = Logger(subsystem: "fi.yusif.CityExplore", category: "LocationManager")
-    private let manager = CLLocationManager()
+    @ObservationIgnored private let manager = CLLocationManager()
     private var monitoringTask: Task<Void, Never>?
     
     public var location: CLLocation?
     public var locationsStatus: CLAuthorizationStatus = .notDetermined
+    public var isAuthorized: Bool = false
     
-    public init() {}
-    
-    public var hasAccess: Bool {
-        locationsStatus == .authorizedAlways || locationsStatus == .authorizedWhenInUse
+    override init() {
+        super.init()
+        manager.delegate = self
+        startLocationServices()
     }
     
-    public func requestLocationAuthorization() {
-        if manager.authorizationStatus == .notDetermined {
+    func startLocationServices() {
+        logger.info("Starting location services")
+        if manager.authorizationStatus == .authorizedAlways || manager.authorizationStatus == .authorizedWhenInUse {
+            manager.startUpdatingLocation()
+            isAuthorized = true
+        } else {
+            isAuthorized = false
             manager.requestWhenInUseAuthorization()
-            logger.info("Requesting location authorization")
         }
     }
     
-    public func updateLocationAuthorizationStatus() {
-        locationsStatus = manager.authorizationStatus
+    
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        location = locations.last
     }
     
-    public func startMonitoringLocationStatus() {
-        let initialStatus = locationsStatus
-        logger.info("Starting location status monitoring")
-        monitoringTask = Task {
-            while true {
-                updateLocationAuthorizationStatus()
-                if locationsStatus != initialStatus {
-                    break
-                }
-                try? await Task.sleep(for: .milliseconds(500))
-            }
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            isAuthorized = true
+            manager.requestLocation()
+        case .notDetermined:
+            isAuthorized = false
+            manager.requestWhenInUseAuthorization()
+        case .denied:
+            isAuthorized = false
+            logger.error("Location permission denied")
+        default:
+            isAuthorized = true
+            startLocationServices()
         }
     }
     
-    public func stopMonitoringLocationStatus() {
-        logger.info("Stopping location status monitoring")
-        monitoringTask?.cancel()
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        logger.error("\(error.localizedDescription)")
     }
     
-    public func updateLocation() async {
-        requestLocationAuthorization()
-        let updates = CLLocationUpdate.liveUpdates()
-        do {
-            for try await update in updates {
-                if let location = update.location {
-                    self.location = location
-                    logger.notice("Location updated")
-                    break
-                }
-            }
-        } catch {
-        }
-    }
     
-    public func getCurrentLocation() async -> CLLocation? {
-        requestLocationAuthorization()
-        let updates = CLLocationUpdate.liveUpdates()
-        do {
-            for try await update in updates {
-                if let location = update.location {
-                    self.location = location
-                    logger.notice("Current location found")
-                    return location
-                }
-            }
-        } catch {
-            logger.error("Could not get current location")
-        }
-        return nil
-    }
+    
 }
