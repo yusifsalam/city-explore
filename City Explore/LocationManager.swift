@@ -12,11 +12,18 @@ public final class LocationManager: NSObject, CLLocationManagerDelegate {
     public var location: CLLocation?
     public var locationsStatus: CLAuthorizationStatus = .notDetermined
     public var isAuthorized: Bool = false
+    public var breadcrumbs: BreadcrumbPath?
+    public var showBreadcrumbBounds = true
+    public var isMonitoringLocation = false
     
     override init() {
         super.init()
         manager.delegate = self
         startLocationServices()
+    }
+    
+    func toggleShowBreadcrumbBounds() {
+        showBreadcrumbBounds.toggle()
     }
     
     func startLocationServices() {
@@ -30,6 +37,18 @@ public final class LocationManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    func startRecordingLocation() {
+        breadcrumbs = BreadcrumbPath()
+        manager.activityType = .fitness
+        manager.pausesLocationUpdatesAutomatically = false
+        manager.startUpdatingLocation()
+        isMonitoringLocation = true
+    }
+    
+    func stopRecordingLocation() {
+        manager.stopUpdatingLocation()
+        isMonitoringLocation = false
+    }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         location = locations.last
