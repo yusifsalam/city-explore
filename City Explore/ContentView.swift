@@ -14,7 +14,7 @@ struct ContentView: View {
                 UserLocationView()
             }
         }
-      
+        
     }
 }
 
@@ -28,4 +28,5 @@ enum Tabs: Equatable, Hashable, Identifiable {
 
 #Preview {
     ContentView()
+        .environment(LocationManager())
 }

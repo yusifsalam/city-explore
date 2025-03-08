@@ -12,3 +12,8 @@ struct UserLocationView: View {
             }
     }
 }
+
+#Preview {
+    UserLocationView()
+        .environment(LocationManager())
+}
